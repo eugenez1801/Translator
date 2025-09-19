@@ -1,6 +1,6 @@
 package com.example.translator.data.remote
 
-import com.example.translator.domain.model.Word
+import com.example.translator.domain.model.remote.Word
 import retrofit2.http.GET
 import retrofit2.http.Query
 

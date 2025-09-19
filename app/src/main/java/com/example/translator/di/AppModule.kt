@@ -1,5 +1,8 @@
 package com.example.translator.di
 
+import android.app.Application
+import androidx.room.Room
+import com.example.translator.data.local.WordDatabase
 import com.example.translator.data.remote.TranslatorApi
 import com.example.translator.data.repository.TranslatorRepositoryImpl
 import com.example.translator.domain.repository.TranslatorRepository
@@ -29,5 +32,15 @@ object AppModule {
     @Singleton
     fun provideTranslatorRepository(api: TranslatorApi): TranslatorRepository{
         return TranslatorRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWordDatabase(app: Application): WordDatabase{
+        return Room.databaseBuilder(
+            app,
+            WordDatabase::class.java,
+            "word_database"
+        ).build()
     }
 }

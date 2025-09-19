@@ -1,6 +1,6 @@
 package com.example.translator.domain.repository
 
-import com.example.translator.domain.model.Word
+import com.example.translator.domain.model.remote.Word
 
 interface TranslatorRepository {
     suspend fun getTranslation(word: String): List<Word>

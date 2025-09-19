@@ -1,4 +1,4 @@
-package com.example.translator.domain.model
+package com.example.translator.domain.model.remote
 
 data class Meanings(
     var id: Int,
