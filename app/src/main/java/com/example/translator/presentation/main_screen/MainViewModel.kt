@@ -18,28 +18,50 @@ class MainViewModel @Inject constructor(
     private val _textSearchField = mutableStateOf("")
     val textSearchField: State<String> = _textSearchField
     fun changeSearchText(newText: String){
-        _textSearchField.value = newText
+        if (newText.length == 0) _textSearchField.value = ""//чтобы можно было очистить строку
+        else if (!newText.endsWith("  ") && newText.isNotBlank())//немного валидации
+            _textSearchField.value = newText
+    }
+    fun eraseSearchText(){
+        _textSearchField.value = ""
     }
 
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
 
+    private val _requestText = mutableStateOf("")//для отображения пользовательского запроса
+    val requestText: State<String> = _requestText
+
     private val _resultText = mutableStateOf("")
     val resultText: State<String> = _resultText
 
+    private val _showToast = mutableStateOf(false)
+    val showToast: State<Boolean> = _showToast
+    fun resetShowToast(){
+        _showToast.value = false
+    }
+
     fun getTranslation(){
+        if (_textSearchField.value.isBlank()){
+//            _resultText.value = "Поле не должно быть пустым" заменено на показ Toast
+            _showToast.value = true
+            return
+        }
+
+        _requestText.value = "Вы ввели: ${_textSearchField.value}"
+
         getTranslationUseCase(_textSearchField.value).onEach { result ->
             when(result){
                 is Resource.Success ->{
                     _isLoading.value = false
-                    _resultText.value = result.data
+                    _resultText.value = "Перевод: ${result.data}"
                 }
                 is Resource.Loading -> {
                     _isLoading.value = true
                 }
                 is Resource.Error -> {
                     _isLoading.value = false
-                    _resultText.value = result.error
+                    _resultText.value = "Ошибка: ${result.error}"
                 }
             }
         }.launchIn(viewModelScope)

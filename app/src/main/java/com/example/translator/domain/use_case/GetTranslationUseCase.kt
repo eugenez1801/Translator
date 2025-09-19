@@ -4,6 +4,7 @@ import com.example.translator.common.Resource
 import com.example.translator.domain.repository.TranslatorRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okio.IOException
 import javax.inject.Inject
 
 class GetTranslationUseCase @Inject constructor(
@@ -13,10 +14,16 @@ class GetTranslationUseCase @Inject constructor(
         emit(Resource.Loading())
         try {
             val result = repository.getTranslation(word)
-            val translationWord = result[0].meanings[0].translation.text//не уверен пока, что это лучше, чем передавать сразу result
+            if (result.isEmpty())
+                throw ResultListException("не удалось перевести ваше слово")
+            val translationWord = result[0].meanings[0].translation.text
             emit(Resource.Success(translationWord))
+        } catch (e: IOException){
+            emit(Resource.Error("Не удалось получить ответ от сервера. Проверьте интернет соединение"))
         } catch (e: Exception){
             emit(Resource.Error(e.message ?: "Unexpected error"))
         }
     }
 }
+
+class ResultListException(message: String): Exception(message)
