@@ -8,7 +8,7 @@ import javax.inject.Inject
 class TranslatorRepositoryImpl @Inject constructor(
     val api: TranslatorApi
 ): TranslatorRepository {
-    override suspend fun getTranslation(word: String): Word {
+    override suspend fun getTranslation(word: String): List<Word> {
         return api.getTranslation(word)
     }
 }
