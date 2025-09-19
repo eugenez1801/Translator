@@ -2,11 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "com.example.translator"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.translator"
@@ -40,6 +42,11 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation (libs.converter.gson)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
