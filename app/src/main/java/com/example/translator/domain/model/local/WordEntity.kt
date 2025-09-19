@@ -6,8 +6,7 @@ import java.util.UUID
 
 @Entity
 data class WordEntity(
-    @PrimaryKey val id: UUID,
     val russian: String,
-    val english: String,
+    @PrimaryKey val english: String,
     var isFavourite: Boolean
 )

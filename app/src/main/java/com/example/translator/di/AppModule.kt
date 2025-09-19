@@ -5,7 +5,9 @@ import androidx.room.Room
 import com.example.translator.data.local.WordDatabase
 import com.example.translator.data.remote.TranslatorApi
 import com.example.translator.data.repository.TranslatorRepositoryImpl
+import com.example.translator.data.repository.WordRepositoryImpl
 import com.example.translator.domain.repository.TranslatorRepository
+import com.example.translator.domain.repository.WordRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +44,11 @@ object AppModule {
             WordDatabase::class.java,
             "word_database"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWordRepository(db: WordDatabase): WordRepository{
+        return WordRepositoryImpl(db.dao())
     }
 }
