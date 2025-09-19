@@ -1,5 +1,7 @@
 package com.example.translator.domain.repository
 
+import com.example.translator.domain.model.Word
+
 interface TranslatorRepository {
-    fun getTranslation(word: String): String
+    suspend fun getTranslation(word: String): Word
 }
