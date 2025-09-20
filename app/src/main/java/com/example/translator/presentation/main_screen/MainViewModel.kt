@@ -5,15 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.translator.common.Resource
+import com.example.translator.domain.model.local.WordEntity
+import com.example.translator.domain.use_case.GetHistoryUseCase
 import com.example.translator.domain.use_case.GetTranslationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getTranslationUseCase: GetTranslationUseCase
+    private val getTranslationUseCase: GetTranslationUseCase,
+    private val getHistoryUseCase: GetHistoryUseCase
 ): ViewModel(){
     private val _textSearchField = mutableStateOf("")
     val textSearchField: State<String> = _textSearchField
@@ -41,6 +45,13 @@ class MainViewModel @Inject constructor(
         _showToast.value = false
     }
 
+    private val _historyList = mutableStateOf(emptyList<WordEntity>())
+    val historyList: State<List<WordEntity>> = _historyList
+
+    init {
+        updateHistory()
+    }
+
     fun getTranslation(){
         if (_textSearchField.value.isBlank()){
 //            _resultText.value = "Поле не должно быть пустым" заменено на показ Toast
@@ -55,6 +66,7 @@ class MainViewModel @Inject constructor(
                 is Resource.Success ->{
                     _isLoading.value = false
                     _resultText.value = "Перевод: ${result.data}"
+                    updateHistory()
                 }
                 is Resource.Loading -> {
                     _isLoading.value = true
@@ -65,5 +77,11 @@ class MainViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun updateHistory(){
+        viewModelScope.launch {
+            _historyList.value = getHistoryUseCase()
+        }
     }
 }

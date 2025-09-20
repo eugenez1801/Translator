@@ -20,8 +20,9 @@ class GetTranslationUseCase @Inject constructor(
                 throw ResultListException("не удалось перевести ваше слово")
             val wordEntity = result[0].toWordEntity()
 //            val translationWord = result[0].meanings[0].translation.text
+            addWordToHistoryUseCase(wordEntity)//теперь сперва слово в историю добавляется, и только
+            //потом отправляется Success, поскольку, когда было наоборот, то история не обновлялась после добавления нового слова
             emit(Resource.Success(wordEntity.russian))
-            addWordToHistoryUseCase(wordEntity)
         } catch (e: IOException){
             emit(Resource.Error("Не удалось получить ответ от сервера. Проверьте интернет соединение"))
         } catch (e: Exception){

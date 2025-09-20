@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -64,7 +65,12 @@ fun SearchPart(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(0.9f),
-                singleLine = true
+                singleLine = true,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        onSearchClick()
+                    }
+                )
             )
 
             IconButton(
