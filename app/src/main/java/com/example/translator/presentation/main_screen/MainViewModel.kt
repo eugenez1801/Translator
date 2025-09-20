@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.translator.common.Resource
 import com.example.translator.domain.model.local.WordEntity
+import com.example.translator.domain.use_case.DeleteWordFromHistoryUseCase
 import com.example.translator.domain.use_case.GetHistoryUseCase
 import com.example.translator.domain.use_case.GetTranslationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getTranslationUseCase: GetTranslationUseCase,
-    private val getHistoryUseCase: GetHistoryUseCase
+    private val getHistoryUseCase: GetHistoryUseCase,
+    private val deleteWordFromHistoryUseCase: DeleteWordFromHistoryUseCase
 ): ViewModel(){
     private val _textSearchField = mutableStateOf("")
     val textSearchField: State<String> = _textSearchField
@@ -87,5 +89,14 @@ class MainViewModel @Inject constructor(
             _historyList.value = getHistoryUseCase()
             _historyIsLoading.value = false
         }
+    }
+
+    fun deleteWordFromHistory(wordEntity: WordEntity){
+        viewModelScope.launch {
+            deleteWordFromHistoryUseCase(wordEntity)
+            updateHistory()//тоже должна быть в корутине, поскольку ждем завершения
+        }
+//        _historyList.value.remove не решился переходить на mutableList, лучше спрашивать у БД каждый раз новый список?
+//        updateHistory() изначально забыл поместить в корутину выше, из-за этого не обновлялся список
     }
 }

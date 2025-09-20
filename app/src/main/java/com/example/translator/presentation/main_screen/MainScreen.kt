@@ -134,8 +134,11 @@ fun MainScreen(
                             .align(Alignment.CenterHorizontally))
 
                     ItemHistory(
-                        word.english,
-                        word.russian
+                        english = word.english,
+                        russian = word.russian,
+                        onDeleteClick = {
+                            viewModel.deleteWordFromHistory(word)
+                        }
                     )
                 }
             }
