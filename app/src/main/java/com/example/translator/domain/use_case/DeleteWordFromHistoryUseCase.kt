@@ -8,13 +8,6 @@ class DeleteWordFromHistoryUseCase @Inject constructor(
     private val repository: WordRepository
 ) {
     suspend operator fun invoke(word: WordEntity){
-        repository.deleteWordFromHistory(word.formatForDatabase())
+        repository.deleteWordFromHistory(word)
     }
-}
-
-fun WordEntity.formatForDatabase(): WordEntity{
-    return this.copy(
-        russian = this.russian.replaceFirstChar { it.lowercaseChar() },
-        english = this.english.replaceFirstChar { it.lowercaseChar() }
-    )
 }

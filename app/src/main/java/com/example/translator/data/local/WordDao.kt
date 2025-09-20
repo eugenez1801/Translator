@@ -12,11 +12,8 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addWordToHistory(word: WordEntity)
 
-    @Query("SELECT * FROM WordEntity")
+    @Query("SELECT * FROM WordEntity ORDER BY id DESC")
     suspend fun getHistory(): List<WordEntity>
-
-    /*@Query("SELECT * FROM WordEntity WHERE id = :id")
-    suspend fun getWordById(id: UUID): WordEntity*/
 
     @Delete
     suspend fun deleteWordFromHistory(word: WordEntity)
