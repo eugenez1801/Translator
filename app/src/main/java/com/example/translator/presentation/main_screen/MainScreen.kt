@@ -1,26 +1,25 @@
 package com.example.translator.presentation.main_screen
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.translator.R
 import com.example.translator.presentation.main_screen.components.ItemHistory
 import com.example.translator.presentation.main_screen.components.SearchPart
 
@@ -38,6 +37,8 @@ fun MainScreen(
     val context = LocalContext.current
 
     val historyList = viewModel.historyList.value
+    val historyIsLoading = viewModel.historyIsLoading.value
+
     LaunchedEffect(showToast) {
         if (showToast){
             Toast.makeText(context, "Поле не должно быть пустым",
@@ -85,31 +86,58 @@ fun MainScreen(
 
             item {
                 if (historyList.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_uk),
-                            contentDescription = "ukFlag",
-                            tint = Color.Unspecified
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        Text(
+                            text = "История поиска",
+                            fontSize = 30.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
                         )
+                    }
+                } else if (!historyIsLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        Text(
+                            text = "История поиска пуста",
+                            fontSize = 30.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
+            }
 
-                        Icon(
-                            painter = painterResource(R.drawable.ic_russia),
-                            contentDescription = "Russian flag",
-                            tint = Color.Unspecified
+            item {
+                if (historyIsLoading){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ){
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.Center)
                         )
                     }
                 }
             }
 
             items(historyList) { word ->
-                ItemHistory(
-                    word.english,
-                    word.russian
-                )
+                Column(
+                    Modifier.padding(horizontal = 20.dp)
+                ) {
+                    HorizontalDivider(thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .align(Alignment.CenterHorizontally))
+
+                    ItemHistory(
+                        word.english,
+                        word.russian
+                    )
+                }
             }
         }
     }

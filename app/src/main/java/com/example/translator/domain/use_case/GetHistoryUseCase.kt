@@ -8,6 +8,14 @@ class GetHistoryUseCase @Inject constructor(
     private val repository: WordRepository
 ){
     suspend operator fun invoke(): List<WordEntity>{
-        return repository.getHistory()
+        val startList = repository.getHistory()
+        return startList.map { it.formatForUi() }
     }
+}
+
+fun WordEntity.formatForUi(): WordEntity{
+    return this.copy(
+        russian = this.russian.replaceFirstChar { it.uppercaseChar() },
+        english = this.english.replaceFirstChar { it.uppercaseChar() }
+    )
 }

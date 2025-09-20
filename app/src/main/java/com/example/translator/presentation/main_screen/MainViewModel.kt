@@ -48,6 +48,9 @@ class MainViewModel @Inject constructor(
     private val _historyList = mutableStateOf(emptyList<WordEntity>())
     val historyList: State<List<WordEntity>> = _historyList
 
+    private val _historyIsLoading = mutableStateOf(true)//для значка загрузки при запуске приложения
+    val historyIsLoading: State<Boolean> = _historyIsLoading
+
     init {
         updateHistory()
     }
@@ -82,6 +85,7 @@ class MainViewModel @Inject constructor(
     private fun updateHistory(){
         viewModelScope.launch {
             _historyList.value = getHistoryUseCase()
+            _historyIsLoading.value = false
         }
     }
 }
