@@ -1,0 +1,12 @@
+package com.example.translator.domain.use_case
+
+import com.example.translator.domain.repository.WordRepository
+import javax.inject.Inject
+
+class ClearHistoryUseCase @Inject constructor(
+    private val repository: WordRepository
+) {
+    suspend operator fun invoke(){
+        repository.clearHistory()
+    }
+}

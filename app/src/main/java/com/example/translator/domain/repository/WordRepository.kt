@@ -7,7 +7,7 @@ interface WordRepository {
 
     suspend fun getHistory(): List<WordEntity>
 
-//    suspend fun getWordById(id: UUID): WordEntity
+    suspend fun clearHistory()
 
     suspend fun deleteWordFromHistory(word: WordEntity)
 

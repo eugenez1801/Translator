@@ -15,6 +15,10 @@ class WordRepositoryImpl(
         return dao.getHistory()
     }
 
+    override suspend fun clearHistory() {
+        dao.clearHistory()
+    }
+
     override suspend fun deleteWordFromHistory(word: WordEntity) {
         dao.deleteWordFromHistory(word)
     }

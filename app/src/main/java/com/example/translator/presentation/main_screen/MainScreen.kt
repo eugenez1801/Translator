@@ -1,16 +1,23 @@
 package com.example.translator.presentation.main_screen
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.translator.presentation.main_screen.components.ItemHistory
 import com.example.translator.presentation.main_screen.components.SearchPart
+import com.example.translator.presentation.main_screen.dialogs.ConfirmDeleteDialog
+import com.example.translator.presentation.main_screen.dialogs.OptionsHistoryDialog
 
 @Composable
 fun MainScreen(
@@ -38,6 +47,10 @@ fun MainScreen(
 
     val historyList = viewModel.historyList.value
     val historyIsLoading = viewModel.historyIsLoading.value
+
+    val optionsHistoryDialogIsShown = viewModel.showHistoryOptionsDialog.value
+    val confirmDeleteDialogIsShown = viewModel.showConfirmDeleteDialog.value
+//    val currentWordForDialog = viewModel.wordForConfirmDeleteDialog.value
 
     LaunchedEffect(showToast) {
         if (showToast){
@@ -89,12 +102,30 @@ fun MainScreen(
                     Box(
                         modifier = Modifier.fillMaxWidth()
                     ){
-                        Text(
-                            text = "История поиска",
-                            fontSize = 30.sp,
+                        Row(
                             modifier = Modifier
-                                .align(Alignment.Center)
-                        )
+                                .fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center
+                        ){
+                            Text(
+                                text = "История поиска",
+                                fontSize = 30.sp,
+                                modifier = Modifier
+                            )
+
+                            IconButton(
+                                onClick = { viewModel.showHistoryOptionsDialog(true) },
+                                modifier = Modifier
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Options of history",
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .padding(bottom = 10.dp)
+                                )
+                            }
+                        }
                     }
                 } else if (!historyIsLoading) {
                     Box(
@@ -138,11 +169,35 @@ fun MainScreen(
                         english = word.english,
                         russian = word.russian,
                         onDeleteClick = {
-                            viewModel.deleteWordFromHistory(word)
+                            viewModel.changeCurrentWordForDialog(word)
+                            viewModel.showConfirmDeleteDialog(true)
                         }
                     )
                 }
             }
         }
+    }
+
+    if (optionsHistoryDialogIsShown){
+        OptionsHistoryDialog(
+            onClearHistoryClick = {
+                viewModel.clearHistory()
+            },
+            onHideDialogClick = {
+                viewModel.showHistoryOptionsDialog(false)
+            }
+        )
+    }
+
+    if (confirmDeleteDialogIsShown){
+        ConfirmDeleteDialog(
+            onConfirmClick = {
+                viewModel.deleteWordFromHistory()
+                viewModel.showConfirmDeleteDialog(false)
+            },
+            onCancelClick = {
+                viewModel.showConfirmDeleteDialog(false)
+            }
+        )
     }
 }

@@ -15,6 +15,9 @@ interface WordDao {
     @Query("SELECT * FROM WordEntity ORDER BY id DESC")
     suspend fun getHistory(): List<WordEntity>
 
+    @Query("DELETE FROM WordEntity")
+    suspend fun clearHistory()
+
     @Delete
     suspend fun deleteWordFromHistory(word: WordEntity)
 

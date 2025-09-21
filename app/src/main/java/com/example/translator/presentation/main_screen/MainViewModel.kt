@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.translator.common.Resource
 import com.example.translator.domain.model.local.WordEntity
+import com.example.translator.domain.use_case.ClearHistoryUseCase
 import com.example.translator.domain.use_case.DeleteWordFromHistoryUseCase
 import com.example.translator.domain.use_case.GetHistoryUseCase
 import com.example.translator.domain.use_case.GetTranslationUseCase
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getTranslationUseCase: GetTranslationUseCase,
     private val getHistoryUseCase: GetHistoryUseCase,
-    private val deleteWordFromHistoryUseCase: DeleteWordFromHistoryUseCase
+    private val deleteWordFromHistoryUseCase: DeleteWordFromHistoryUseCase,
+    private val clearHistoryUseCase: ClearHistoryUseCase
 ): ViewModel(){
     private val _textSearchField = mutableStateOf("")
     val textSearchField: State<String> = _textSearchField
@@ -52,6 +54,23 @@ class MainViewModel @Inject constructor(
 
     private val _historyIsLoading = mutableStateOf(true)//для значка загрузки при запуске приложения
     val historyIsLoading: State<Boolean> = _historyIsLoading
+
+    private val _showHistoryOptionsDialog = mutableStateOf(false)
+    val showHistoryOptionsDialog: State<Boolean> = _showHistoryOptionsDialog
+    fun showHistoryOptionsDialog(isShown: Boolean){
+        _showHistoryOptionsDialog.value = isShown
+    }
+
+    private val _showConfirmDeleteDialog = mutableStateOf(false)
+    val showConfirmDeleteDialog: State<Boolean> = _showConfirmDeleteDialog
+    fun showConfirmDeleteDialog(isShown: Boolean){
+        _showConfirmDeleteDialog.value = isShown
+    }
+    private val _wordForConfirmDeleteDialog = mutableStateOf<WordEntity?>(null)
+//    val wordForConfirmDeleteDialog: State<WordEntity?> = _wordForConfirmDeleteDialog
+    fun changeCurrentWordForDialog(word: WordEntity){
+        _wordForConfirmDeleteDialog.value = word
+    }
 
     init {
         updateHistory()
@@ -91,12 +110,19 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun deleteWordFromHistory(wordEntity: WordEntity){
+    fun deleteWordFromHistory(){
         viewModelScope.launch {
-            deleteWordFromHistoryUseCase(wordEntity)
+            deleteWordFromHistoryUseCase(_wordForConfirmDeleteDialog.value!!)
             updateHistory()//тоже должна быть в корутине, поскольку ждем завершения
         }
 //        _historyList.value.remove не решился переходить на mutableList, лучше спрашивать у БД каждый раз новый список?
 //        updateHistory() изначально забыл поместить в корутину выше, из-за этого не обновлялся список
+    }
+
+    fun clearHistory(){
+        viewModelScope.launch {
+            clearHistoryUseCase()
+            updateHistory()
+        }
     }
 }
