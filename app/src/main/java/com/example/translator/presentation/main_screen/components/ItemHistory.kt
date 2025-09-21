@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +43,6 @@ fun ItemHistory(
                 .fillMaxHeight()
                 .width(40.dp)
                 .align(Alignment.CenterVertically)
-//                .border(1.dp, color = Color.Blue)
         ){
             Text(
                 text = "$position ",
@@ -80,8 +80,8 @@ fun ItemHistory(
             Icon(
                 imageVector = Icons.Default.Star,
                 tint = if (isFavouriteWord) Color.Yellow
-                    else Color.Black,
-                contentDescription = "Make favourite",
+                    else MaterialTheme.colorScheme.onSurface,
+                contentDescription = "Сделать слово избранным",
                 modifier = Modifier
                     .size(50.dp)
             )
@@ -94,7 +94,7 @@ fun ItemHistory(
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Delete from history",
+                contentDescription = "Удалить слово из истории",
                 modifier = Modifier
                     .size(50.dp)
             )

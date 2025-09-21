@@ -16,9 +16,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -115,7 +117,8 @@ fun FavouritesScreen(
                             )
 
                             Text(
-                                text = "Общее количество слов: ${favouriteWordsList.size}"
+                                text = "Общее количество слов: ${favouriteWordsList.size}",
+                                fontSize = 16.sp
                             )
 
                             Icon(
@@ -172,7 +175,10 @@ fun FavouritesScreen(
                         }
                     },
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = FloatingActionButtonDefaults.smallShape
                 ) {
                     Text("Перейти к началу")
                 }

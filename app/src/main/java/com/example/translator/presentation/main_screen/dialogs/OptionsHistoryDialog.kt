@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cryptocurrencyappcompose.presentation.coin_list.dialogs.search_dialog.components.DefaultRadioButton
@@ -48,11 +51,14 @@ fun OptionsHistoryDialog(
                             contentDescription = "Очистить историю поиска",
                             modifier = Modifier
                                 .size(15.dp)
-                                .padding(end = 3.dp)
+                                .padding(end = 3.dp),
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Очистить историю поиска",
-                            fontSize = 18.sp
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textDecoration = TextDecoration.Underline
                         )
                     }
                 }
@@ -67,14 +73,14 @@ fun OptionsHistoryDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     DefaultRadioButton(
                         text = "Сначала новые",
                         selected = orderNew,
                         onSelect = { onChangeOrderClick(true) }
                     )
-//                    Spacer(Modifier.width(10.dp))
+
                     DefaultRadioButton(
                         text = "Сначала старые",
                         selected = !orderNew,
@@ -91,9 +97,15 @@ fun OptionsHistoryDialog(
             TextButton(
                 onClick = {
                     onHideDialogClick()
-                }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
             ) {
-                Text("Закрыть окно")
+                Text(
+                    text = "Закрыть окно",
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
             }
         }
     )

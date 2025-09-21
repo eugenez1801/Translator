@@ -18,9 +18,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -147,7 +149,8 @@ fun MainScreen(
                             ){
                                 CircularProgressIndicator(
                                     modifier = Modifier
-                                        .align(Alignment.Center)
+                                        .align(Alignment.Center),
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -176,7 +179,7 @@ fun MainScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Settings,
-                                        contentDescription = "Options of history",
+                                        contentDescription = "Настройки истории",
                                         modifier = Modifier
                                             .size(40.dp)
                                             .padding(bottom = 10.dp)
@@ -206,7 +209,8 @@ fun MainScreen(
                         ){
                             CircularProgressIndicator(
                                 modifier = Modifier
-                                    .align(Alignment.Center)
+                                    .align(Alignment.Center),
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -262,7 +266,10 @@ fun MainScreen(
                         }
                     },
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = FloatingActionButtonDefaults.smallShape
                 ) {
                     Text("Перейти к началу")
                 }

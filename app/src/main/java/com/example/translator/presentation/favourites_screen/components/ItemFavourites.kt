@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun ItemFavourites(
@@ -39,6 +39,7 @@ fun ItemFavourites(
             text = english,
             modifier = Modifier
                 .weight(0.45f),
+            fontSize = 16.sp,
             textAlign = TextAlign.Start
         )
 
@@ -46,6 +47,7 @@ fun ItemFavourites(
             text = "$position",
             modifier = Modifier
                 .weight(0.1f),
+            fontSize = 20.sp,
             textAlign = TextAlign.Center
         )
 
@@ -53,6 +55,7 @@ fun ItemFavourites(
             text = russian,
             modifier = Modifier
                 .weight(0.45f),
+            fontSize = 16.sp,
             textAlign = TextAlign.End
         )
     }

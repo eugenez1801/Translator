@@ -13,8 +13,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -51,7 +53,7 @@ fun SearchPart(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "clear",
+                                contentDescription = "Очистить поле",
                                 modifier = Modifier.size(100.dp)
                             )
                         }
@@ -63,6 +65,11 @@ fun SearchPart(
                     onDone = {
                         onSearchClick()
                     }
+                ),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    cursorColor = Color.White
                 )
             )
 
@@ -74,7 +81,7 @@ fun SearchPart(
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "search",
+                    contentDescription = "Поиск",
                     modifier = Modifier.size(100.dp)
                 )
             }
