@@ -44,7 +44,7 @@ fun ItemHistory(
 //                .border(1.dp, color = Color.Blue)
         ){
             Text(
-                text = "${position + 1}",
+                text = "$position ",
                 fontSize = if (position + 1 < 100) 30.sp
                     else 23.sp,// <1000 помещается при 23, при 24 уже нет
                 modifier = Modifier

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateSetOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.translator.common.Resource
+import com.example.translator.domain.model.local.FavouriteWordEntity
 import com.example.translator.domain.model.local.WordEntity
 import com.example.translator.domain.use_case.ClearHistoryUseCase
 import com.example.translator.domain.use_case.DeleteWordFromHistoryUseCase
@@ -79,9 +80,14 @@ class MainViewModel @Inject constructor(
         _wordForConfirmDeleteDialog.value = word
     }
 
+    //эта переменная для UI на экране с историей поиска
     private val _setOfFavouriteWords = mutableStateSetOf<String>()//храним english для приведения
     //wordEntity и favouriteWordEntity к общему виду
 //    val setOfFavouriteWords: Set<String> = _setOfFavouriteWords
+
+    //эта переменная для экрана с избранными
+    private val _favouriteWordsList = mutableStateOf(emptyList<FavouriteWordEntity>())
+    val favouriteWordsList: State<List<FavouriteWordEntity>> = _favouriteWordsList
 
     init {
         updateHistory()
@@ -165,7 +171,9 @@ class MainViewModel @Inject constructor(
 
     private fun getFavouriteWords(){
         viewModelScope.launch {
-            _setOfFavouriteWords.addAll(getFavouriteWordsUseCase().map { it.english })
+            val favouriteWords = getFavouriteWordsUseCase()
+            _setOfFavouriteWords.addAll(favouriteWords.map { it.english })
+            _favouriteWordsList.value = favouriteWords
         }
     }
 

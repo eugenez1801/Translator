@@ -204,7 +204,7 @@ fun MainScreen(
                                 .align(Alignment.CenterHorizontally))
 
                         ItemHistory(
-                            position = position,
+                            position = position + 1,
                             english = word.english,
                             russian = word.russian,
                             isFavouriteWord = viewModel.isFavouriteWord(word),
@@ -216,6 +216,14 @@ fun MainScreen(
                                 viewModel.onFavouriteIconClick(word)
                             }
                         )
+
+                        if (position + 1 == historyList.size){
+                            HorizontalDivider(thickness = 1.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth(1f)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        }
                     }
                 }
             }
