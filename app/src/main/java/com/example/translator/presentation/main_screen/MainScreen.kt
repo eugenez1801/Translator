@@ -24,9 +24,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.translator.R
+import com.example.translator.presentation.MainViewModel
+import com.example.translator.presentation.Screen
 import com.example.translator.presentation.main_screen.components.ItemHistory
 import com.example.translator.presentation.main_screen.components.SearchPart
 import com.example.translator.presentation.main_screen.dialogs.ConfirmDeleteDialog
@@ -34,6 +39,7 @@ import com.example.translator.presentation.main_screen.dialogs.OptionsHistoryDia
 
 @Composable
 fun MainScreen(
+    navController: NavController,
     viewModel: MainViewModel = viewModel()
 ) {
     val textForSearchField = viewModel.textSearchField.value
@@ -59,30 +65,123 @@ fun MainScreen(
         }
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(15.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 3.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            item {
-                Box(
+            Text(
+                text = "Поиск",
+                fontSize = 28.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically)
+            )
+
+            IconButton(
+                onClick = {
+                    navController.navigate(Screen.FavouritesScreen)
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_favourite),
+                    contentDescription = "Перейти к избранным",
                     modifier = Modifier
-                        .height(190.dp)//чтобы фиксированый размер был для верного отображения загрузки
-                ){
-                    if (!isLoading){
-                        SearchPart(
-                            textInSearchField = textForSearchField,
-                            onTextChange = { newText ->
-                                viewModel.changeSearchText(newText)
-                            },
-                            onSearchClick = { viewModel.getTranslation() },
-                            requestText = textForRequest,
-                            resultText = textForResult,
-                            onEraseClick = { viewModel.eraseSearchText() }
-                        )
-                    } else {
+                        .size(50.dp)
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            //уменьшили, поскольку верхний текст больше не является частью SearchPart
+                            .height(123.dp)//чтобы фиксированый размер был для верного отображения загрузки
+                    ){
+                        if (!isLoading){
+                            SearchPart(
+                                textInSearchField = textForSearchField,
+                                onTextChange = { newText ->
+                                    viewModel.changeSearchText(newText)
+                                },
+                                onSearchClick = { viewModel.getTranslation() },
+                                requestText = textForRequest,
+                                resultText = textForResult,
+                                onEraseClick = { viewModel.eraseSearchText() }
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            ){
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    if (historyList.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ){
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center
+                            ){
+                                Text(
+                                    text = "История поиска",
+                                    fontSize = 30.sp,
+                                    modifier = Modifier
+                                )
+
+                                IconButton(
+                                    onClick = { viewModel.showHistoryOptionsDialog(true) },
+                                    modifier = Modifier
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Settings,
+                                        contentDescription = "Options of history",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .padding(bottom = 10.dp)
+                                    )
+                                }
+                            }
+                        }
+                    } else if (!historyIsLoading) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ){
+                            Text(
+                                text = "История поиска пуста",
+                                fontSize = 30.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    if (historyIsLoading){
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -94,88 +193,30 @@ fun MainScreen(
                         }
                     }
                 }
-            }
 
-            item {
-                if (historyList.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ){
-                        Row(
+                itemsIndexed(historyList) { position, word ->
+                    Column(
+                        Modifier.padding(horizontal = 8.dp)
+                    ) {
+                        HorizontalDivider(thickness = 1.dp,
                             modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center
-                        ){
-                            Text(
-                                text = "История поиска",
-                                fontSize = 30.sp,
-                                modifier = Modifier
-                            )
+                                .fillMaxWidth(1f)
+                                .align(Alignment.CenterHorizontally))
 
-                            IconButton(
-                                onClick = { viewModel.showHistoryOptionsDialog(true) },
-                                modifier = Modifier
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Options of history",
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .padding(bottom = 10.dp)
-                                )
+                        ItemHistory(
+                            position = position,
+                            english = word.english,
+                            russian = word.russian,
+                            isFavouriteWord = viewModel.isFavouriteWord(word),
+                            onDeleteClick = {
+                                viewModel.changeCurrentWordForDialog(word)
+                                viewModel.showConfirmDeleteDialog(true)
+                            },
+                            onFavouriteClick = {
+                                viewModel.onFavouriteIconClick(word)
                             }
-                        }
-                    }
-                } else if (!historyIsLoading) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ){
-                        Text(
-                            text = "История поиска пуста",
-                            fontSize = 30.sp,
-                            modifier = Modifier
-                                .align(Alignment.Center)
                         )
                     }
-                }
-            }
-
-            item {
-                if (historyIsLoading){
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ){
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                        )
-                    }
-                }
-            }
-
-            itemsIndexed(historyList) { position, word ->
-                Column(
-                    Modifier.padding(horizontal = 20.dp)
-                ) {
-                    HorizontalDivider(thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .align(Alignment.CenterHorizontally))
-
-                    ItemHistory(
-                        position = position,
-                        english = word.english,
-                        russian = word.russian,
-                        isFavouriteWord = viewModel.isFavouriteWord(word),
-                        onDeleteClick = {
-                            viewModel.changeCurrentWordForDialog(word)
-                            viewModel.showConfirmDeleteDialog(true)
-                        },
-                        onFavouriteClick = {
-                            viewModel.onFavouriteIconClick(word)
-                        }
-                    )
                 }
             }
         }

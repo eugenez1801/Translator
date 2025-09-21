@@ -15,8 +15,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.translator.presentation.favourites_screen.FavouritesScreen
 import com.example.translator.presentation.main_screen.MainScreen
-import com.example.translator.presentation.main_screen.MainViewModel
 import com.example.translator.ui.theme.TranslatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +38,12 @@ class MainActivity : ComponentActivity() {
                     ){
                         composable<Screen.MainScreen> {
                             val viewModel = hiltViewModel<MainViewModel>()
-                            MainScreen()
+                            MainScreen(navController)
+                        }
+
+                        composable<Screen.FavouritesScreen> {
+                            val viewModel = hiltViewModel<MainViewModel>()
+                            FavouritesScreen(navController)
                         }
                     }
                 }

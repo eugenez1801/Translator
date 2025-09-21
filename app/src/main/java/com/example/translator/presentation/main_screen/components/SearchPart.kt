@@ -29,14 +29,7 @@ fun SearchPart(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(15.dp)
     ) {
-        Text(
-            text = "Введите слово на английском для получения перевода",
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -64,7 +57,7 @@ fun SearchPart(
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth(0.9f),
+                modifier = Modifier.fillMaxWidth(0.86f),
                 singleLine = true,
                 keyboardActions = KeyboardActions(
                     onDone = {

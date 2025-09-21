@@ -1,6 +1,5 @@
 package com.example.translator.presentation.main_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,7 +72,6 @@ fun ItemHistory(
         IconButton(
             onClick = {
                 onFavouriteClick()
-                Log.d("Favourite", "Item: $isFavouriteWord")
             },
             modifier = Modifier
 //                .size(50.dp)

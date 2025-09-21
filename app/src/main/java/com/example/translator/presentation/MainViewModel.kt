@@ -1,4 +1,4 @@
-package com.example.translator.presentation.main_screen
+package com.example.translator.presentation
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
