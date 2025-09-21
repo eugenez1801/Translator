@@ -1,4 +1,4 @@
-package com.example.translator.presentation.main_screen.dialogs
+package com.example.translator.presentation.common.dialogs
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -8,13 +8,14 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ConfirmDeleteDialog(
+    text: String,
     onConfirmClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
     AlertDialog(
         title = {
             Text(
-                text = "Вы уверены, что хотите удалить слово из истории?",
+                text = text,
                 fontSize = 20.sp
             )
         },

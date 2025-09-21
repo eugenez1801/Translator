@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import com.example.translator.R
 import com.example.translator.presentation.MainViewModel
 import com.example.translator.presentation.Screen
+import com.example.translator.presentation.common.dialogs.ConfirmDeleteDialog
 import com.example.translator.presentation.favourites_screen.components.ItemFavourites
 
 @Composable
@@ -37,10 +38,12 @@ fun FavouritesScreen(
 ) {
     val favouriteWordsList = viewModel.favouriteWordsList.value
 
+    val showConfirmFavouriteDeleteDialog = viewModel.showConfirmFavouriteDeleteDialog.value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(15.dp)
+            .padding(start = 15.dp, end = 15.dp, top = 15.dp)
     ) {
         Row(
             modifier = Modifier
@@ -121,7 +124,10 @@ fun FavouritesScreen(
                             position = position + 1,
                             english = word.english,
                             russian = word.russian,
-                            onFavouriteClick = {},
+                            onDeleteClick = {
+                                viewModel.changeCurrentFavouriteWordForDialog(word)
+                                viewModel.confirmFavouriteDeleteDialogShow(true)
+                            }
                         )
 
                         if (position + 1 == favouriteWordsList.size){
@@ -148,5 +154,18 @@ fun FavouritesScreen(
                     .align(Alignment.Center)
             )
         }
+    }
+
+    if (showConfirmFavouriteDeleteDialog){
+        ConfirmDeleteDialog(
+            text = "Вы уверены, что хотите удалить слово из избранных?",
+            onConfirmClick = {
+                viewModel.deleteFavouriteWordFromList()
+                viewModel.confirmFavouriteDeleteDialogShow(false)
+            },
+            onCancelClick = {
+                viewModel.confirmFavouriteDeleteDialogShow(false)
+            }
+        )
     }
 }

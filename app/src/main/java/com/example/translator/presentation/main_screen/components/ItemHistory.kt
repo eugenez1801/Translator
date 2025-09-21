@@ -34,7 +34,8 @@ fun ItemHistory(
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
@@ -83,7 +84,6 @@ fun ItemHistory(
                 contentDescription = "Make favourite",
                 modifier = Modifier
                     .size(50.dp)
-                    .padding(top = 6.dp)
             )
         }
 
@@ -97,7 +97,6 @@ fun ItemHistory(
                 contentDescription = "Delete from history",
                 modifier = Modifier
                     .size(50.dp)
-                    .padding(top = 6.dp)
             )
         }
     }

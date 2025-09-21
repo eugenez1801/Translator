@@ -65,13 +65,14 @@ class MainViewModel @Inject constructor(
 
     private val _showHistoryOptionsDialog = mutableStateOf(false)
     val showHistoryOptionsDialog: State<Boolean> = _showHistoryOptionsDialog
-    fun showHistoryOptionsDialog(isShown: Boolean){
+    fun historyOptionsDialogShow(isShown: Boolean){
         _showHistoryOptionsDialog.value = isShown
     }
 
+    //для работы с удалением слова из истории поиска
     private val _showConfirmDeleteDialog = mutableStateOf(false)
     val showConfirmDeleteDialog: State<Boolean> = _showConfirmDeleteDialog
-    fun showConfirmDeleteDialog(isShown: Boolean){
+    fun confirmDeleteDialogShow(isShown: Boolean){
         _showConfirmDeleteDialog.value = isShown
     }
     private val _wordForConfirmDeleteDialog = mutableStateOf<WordEntity?>(null)
@@ -88,6 +89,18 @@ class MainViewModel @Inject constructor(
     //эта переменная для экрана с избранными
     private val _favouriteWordsList = mutableStateOf(emptyList<FavouriteWordEntity>())
     val favouriteWordsList: State<List<FavouriteWordEntity>> = _favouriteWordsList
+
+    //для работы с удалением слова из списка избранных
+    private val _showConfirmFavouriteDeleteDialog = mutableStateOf(false)
+    val showConfirmFavouriteDeleteDialog: State<Boolean> = _showConfirmFavouriteDeleteDialog
+    fun confirmFavouriteDeleteDialogShow(isShown: Boolean){
+        _showConfirmFavouriteDeleteDialog.value = isShown
+    }
+    private val _wordForConfirmFavouriteDeleteDialog = mutableStateOf<FavouriteWordEntity?>(null)
+    //    val wordForConfirmDeleteDialog: State<WordEntity?> = _wordForConfirmDeleteDialog
+    fun changeCurrentFavouriteWordForDialog(word: FavouriteWordEntity){
+        _wordForConfirmFavouriteDeleteDialog.value = word
+    }
 
     init {
         updateHistory()
@@ -128,13 +141,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //для удаления из истории (в диалоговом окне)
     fun deleteWordFromHistory(){
         viewModelScope.launch {
             deleteWordFromHistoryUseCase(_wordForConfirmDeleteDialog.value!!)
             updateHistory()//тоже должна быть в корутине, поскольку ждем завершения
         }
-//        _historyList.value.remove не решился переходить на mutableList, лучше спрашивать у БД каждый раз новый список?
-//        updateHistory() изначально забыл поместить в корутину выше, из-за этого не обновлялся список
     }
 
     fun clearHistory(){
@@ -144,7 +156,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
+    //нужен для экрана с историей запросов
     fun onFavouriteIconClick(word: WordEntity){
         if (!_setOfFavouriteWords.contains(word.english)){
             makeWordFavourite(word)
@@ -153,6 +165,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //нужен для добавления избранного слова
     private fun makeWordFavourite(word: WordEntity){
         _setOfFavouriteWords.add(word.english)
         viewModelScope.launch {
@@ -161,10 +174,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //нужен для удаления избранного слова
     private fun removeFavouriteWord(word: WordEntity){
         _setOfFavouriteWords.remove(word.english)
         viewModelScope.launch {
             removeFavouriteWordUseCase(wordEntity = word)
+            getFavouriteWords()
+        }
+    }
+
+    //нужен для экрана со списком избранных (в диалоговом окне)
+    fun deleteFavouriteWordFromList(){
+        _setOfFavouriteWords.remove(_wordForConfirmFavouriteDeleteDialog.value!!.english)
+        viewModelScope.launch {
+            removeFavouriteWordUseCase(favouriteWordEntity = _wordForConfirmFavouriteDeleteDialog.value!!)
             getFavouriteWords()
         }
     }

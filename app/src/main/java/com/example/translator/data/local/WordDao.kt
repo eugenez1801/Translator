@@ -33,6 +33,6 @@ interface WordDao {
     @Query("SELECT * FROM FavouriteWordEntity WHERE english = :english")
     suspend fun getFavouriteWordByEnglish(english: String): FavouriteWordEntity
 
-    @Query("SELECT * FROM FavouriteWordEntity")
+    @Query("SELECT * FROM FavouriteWordEntity ORDER BY id DESC")
     suspend fun getFavouriteWords(): List<FavouriteWordEntity>
 }

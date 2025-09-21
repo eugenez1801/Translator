@@ -34,7 +34,7 @@ import com.example.translator.presentation.MainViewModel
 import com.example.translator.presentation.Screen
 import com.example.translator.presentation.main_screen.components.ItemHistory
 import com.example.translator.presentation.main_screen.components.SearchPart
-import com.example.translator.presentation.main_screen.dialogs.ConfirmDeleteDialog
+import com.example.translator.presentation.common.dialogs.ConfirmDeleteDialog
 import com.example.translator.presentation.main_screen.dialogs.OptionsHistoryDialog
 
 @Composable
@@ -68,7 +68,7 @@ fun MainScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(15.dp)
+            .padding(start = 15.dp, end = 15.dp, top = 15.dp)
     ) {
         Row(
             modifier = Modifier
@@ -153,7 +153,7 @@ fun MainScreen(
                                 )
 
                                 IconButton(
-                                    onClick = { viewModel.showHistoryOptionsDialog(true) },
+                                    onClick = { viewModel.historyOptionsDialogShow(true) },
                                     modifier = Modifier
                                 ) {
                                     Icon(
@@ -210,7 +210,7 @@ fun MainScreen(
                             isFavouriteWord = viewModel.isFavouriteWord(word),
                             onDeleteClick = {
                                 viewModel.changeCurrentWordForDialog(word)
-                                viewModel.showConfirmDeleteDialog(true)
+                                viewModel.confirmDeleteDialogShow(true)
                             },
                             onFavouriteClick = {
                                 viewModel.onFavouriteIconClick(word)
@@ -236,19 +236,20 @@ fun MainScreen(
                 viewModel.clearHistory()
             },
             onHideDialogClick = {
-                viewModel.showHistoryOptionsDialog(false)
+                viewModel.historyOptionsDialogShow(false)
             }
         )
     }
 
     if (confirmDeleteDialogIsShown){
         ConfirmDeleteDialog(
+            text = "Вы уверены, что хотите удалить слово из истории?",
             onConfirmClick = {
                 viewModel.deleteWordFromHistory()
-                viewModel.showConfirmDeleteDialog(false)
+                viewModel.confirmDeleteDialogShow(false)
             },
             onCancelClick = {
-                viewModel.showConfirmDeleteDialog(false)
+                viewModel.confirmDeleteDialogShow(false)
             }
         )
     }
