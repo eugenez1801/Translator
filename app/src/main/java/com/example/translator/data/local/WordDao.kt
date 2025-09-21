@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.translator.domain.model.local.FavouriteWordEntity
 import com.example.translator.domain.model.local.WordEntity
 
 @Dao
@@ -21,9 +22,17 @@ interface WordDao {
     @Delete
     suspend fun deleteWordFromHistory(word: WordEntity)
 
-    @Query("UPDATE WordEntity SET isFavourite = :isFavourite WHERE english = :english")
-    suspend fun changeWordIsFavourite(english: String, isFavourite: Boolean)
 
-    @Query("SELECT * FROM WordEntity WHERE isFavourite = 1")//1 == true
-    suspend fun getFavouriteWords(): List<WordEntity>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun makeWordFavourite(favouriteWord: FavouriteWordEntity)
+
+    @Delete
+    suspend fun removeFavouriteWord(favouriteWord: FavouriteWordEntity)
+
+    @Query("SELECT * FROM FavouriteWordEntity WHERE english = :english")
+    suspend fun getFavouriteWordByEnglish(english: String): FavouriteWordEntity
+
+    @Query("SELECT * FROM FavouriteWordEntity")
+    suspend fun getFavouriteWords(): List<FavouriteWordEntity>
 }

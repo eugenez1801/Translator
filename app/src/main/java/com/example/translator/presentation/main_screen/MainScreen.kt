@@ -50,7 +50,6 @@ fun MainScreen(
 
     val optionsHistoryDialogIsShown = viewModel.showHistoryOptionsDialog.value
     val confirmDeleteDialogIsShown = viewModel.showConfirmDeleteDialog.value
-//    val currentWordForDialog = viewModel.wordForConfirmDeleteDialog.value
 
     LaunchedEffect(showToast) {
         if (showToast){
@@ -168,9 +167,13 @@ fun MainScreen(
                         position = position,
                         english = word.english,
                         russian = word.russian,
+                        isFavouriteWord = viewModel.isFavouriteWord(word),
                         onDeleteClick = {
                             viewModel.changeCurrentWordForDialog(word)
                             viewModel.showConfirmDeleteDialog(true)
+                        },
+                        onFavouriteClick = {
+                            viewModel.onFavouriteIconClick(word)
                         }
                     )
                 }

@@ -1,5 +1,6 @@
 package com.example.translator.domain.repository
 
+import com.example.translator.domain.model.local.FavouriteWordEntity
 import com.example.translator.domain.model.local.WordEntity
 
 interface WordRepository {
@@ -11,7 +12,11 @@ interface WordRepository {
 
     suspend fun deleteWordFromHistory(word: WordEntity)
 
-    suspend fun changeWordIsFavourite(english: String, isFavourite: Boolean)
+    suspend fun makeWordFavourite(favouriteWord: FavouriteWordEntity)
 
-    suspend fun getFavouriteWords(): List<WordEntity>
+    suspend fun removeFavouriteWord(favouriteWord: FavouriteWordEntity)
+
+    suspend fun getFavouriteWordByEnglish(english: String): FavouriteWordEntity
+
+    suspend fun getFavouriteWords(): List<FavouriteWordEntity>
 }

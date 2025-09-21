@@ -11,7 +11,6 @@ data class Word(
 fun Word.toWordEntity(): WordEntity{
     return WordEntity(
         russian = meanings[0].translation.text,
-        english = text,
-        isFavourite = false
+        english = text
     )
 }

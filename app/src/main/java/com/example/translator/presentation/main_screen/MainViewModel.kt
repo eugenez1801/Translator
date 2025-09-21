@@ -2,14 +2,18 @@ package com.example.translator.presentation.main_screen
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.translator.common.Resource
 import com.example.translator.domain.model.local.WordEntity
 import com.example.translator.domain.use_case.ClearHistoryUseCase
 import com.example.translator.domain.use_case.DeleteWordFromHistoryUseCase
+import com.example.translator.domain.use_case.GetFavouriteWordsUseCase
 import com.example.translator.domain.use_case.GetHistoryUseCase
 import com.example.translator.domain.use_case.GetTranslationUseCase
+import com.example.translator.domain.use_case.MakeWordFavouriteUseCase
+import com.example.translator.domain.use_case.RemoveFavouriteWordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,7 +25,10 @@ class MainViewModel @Inject constructor(
     private val getTranslationUseCase: GetTranslationUseCase,
     private val getHistoryUseCase: GetHistoryUseCase,
     private val deleteWordFromHistoryUseCase: DeleteWordFromHistoryUseCase,
-    private val clearHistoryUseCase: ClearHistoryUseCase
+    private val clearHistoryUseCase: ClearHistoryUseCase,
+    private val getFavouriteWordsUseCase: GetFavouriteWordsUseCase,
+    private val makeWordFavouriteUseCase: MakeWordFavouriteUseCase,
+    private val removeFavouriteWordUseCase: RemoveFavouriteWordUseCase
 ): ViewModel(){
     private val _textSearchField = mutableStateOf("")
     val textSearchField: State<String> = _textSearchField
@@ -72,8 +79,13 @@ class MainViewModel @Inject constructor(
         _wordForConfirmDeleteDialog.value = word
     }
 
+    private val _setOfFavouriteWords = mutableStateSetOf<String>()//храним english для приведения
+    //wordEntity и favouriteWordEntity к общему виду
+//    val setOfFavouriteWords: Set<String> = _setOfFavouriteWords
+
     init {
         updateHistory()
+        getFavouriteWords()
     }
 
     fun getTranslation(){
@@ -124,5 +136,40 @@ class MainViewModel @Inject constructor(
             clearHistoryUseCase()
             updateHistory()
         }
+    }
+
+
+    fun onFavouriteIconClick(word: WordEntity){
+        if (!_setOfFavouriteWords.contains(word.english)){
+            makeWordFavourite(word)
+        } else{
+            removeFavouriteWord(word)
+        }
+    }
+
+    private fun makeWordFavourite(word: WordEntity){
+        _setOfFavouriteWords.add(word.english)
+        viewModelScope.launch {
+            makeWordFavouriteUseCase(word)
+            getFavouriteWords()
+        }
+    }
+
+    private fun removeFavouriteWord(word: WordEntity){
+        _setOfFavouriteWords.remove(word.english)
+        viewModelScope.launch {
+            removeFavouriteWordUseCase(wordEntity = word)
+            getFavouriteWords()
+        }
+    }
+
+    private fun getFavouriteWords(){
+        viewModelScope.launch {
+            _setOfFavouriteWords.addAll(getFavouriteWordsUseCase().map { it.english })
+        }
+    }
+
+    fun isFavouriteWord(word: WordEntity): Boolean{
+        return _setOfFavouriteWords.contains(word.english)
     }
 }

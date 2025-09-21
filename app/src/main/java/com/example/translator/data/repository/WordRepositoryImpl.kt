@@ -1,6 +1,7 @@
 package com.example.translator.data.repository
 
 import com.example.translator.data.local.WordDao
+import com.example.translator.domain.model.local.FavouriteWordEntity
 import com.example.translator.domain.model.local.WordEntity
 import com.example.translator.domain.repository.WordRepository
 
@@ -23,11 +24,20 @@ class WordRepositoryImpl(
         dao.deleteWordFromHistory(word)
     }
 
-    override suspend fun changeWordIsFavourite(english: String, isFavourite: Boolean) {
-        dao.changeWordIsFavourite(english, isFavourite)
+    override suspend fun makeWordFavourite(favouriteWord: FavouriteWordEntity) {
+        dao.makeWordFavourite(favouriteWord)
     }
 
-    override suspend fun getFavouriteWords(): List<WordEntity> {
+    override suspend fun removeFavouriteWord(favouriteWord: FavouriteWordEntity) {
+        dao.removeFavouriteWord(favouriteWord)
+    }
+
+    override suspend fun getFavouriteWordByEnglish(english: String): FavouriteWordEntity {
+        return dao.getFavouriteWordByEnglish(english)
+    }
+
+
+    override suspend fun getFavouriteWords(): List<FavouriteWordEntity> {
         return dao.getFavouriteWords()
     }
 }
