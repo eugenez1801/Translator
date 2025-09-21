@@ -69,8 +69,10 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
     val showButtonForScroll by remember {
-        derivedStateOf { listState.firstVisibleItemIndex > 6 }
+        derivedStateOf { listState.firstVisibleItemIndex > 13 }
     }
+
+    val orderIsNew = viewModel.currentOrderHistoryIsNew.value
 
     LaunchedEffect(showToast) {
         if (showToast){
@@ -270,6 +272,10 @@ fun MainScreen(
 
     if (optionsHistoryDialogIsShown){
         OptionsHistoryDialog(
+            orderNew = orderIsNew,
+            onChangeOrderClick = {
+                viewModel.changeOrderHistory(it)
+            },
             onClearHistoryClick = {
                 viewModel.clearHistory()
             },

@@ -102,6 +102,15 @@ class MainViewModel @Inject constructor(
         _wordForConfirmFavouriteDeleteDialog.value = word
     }
 
+    private val _currentOrderHistoryIsNew = mutableStateOf(true)
+    val currentOrderHistoryIsNew: State<Boolean> = _currentOrderHistoryIsNew
+    fun changeOrderHistory(isNew: Boolean){
+        if (_currentOrderHistoryIsNew.value != isNew){
+            _historyList.value = _historyList.value.reversed()
+        }
+        _currentOrderHistoryIsNew.value = isNew
+    }
+
     init {
         updateHistory()
         getFavouriteWords()
@@ -136,7 +145,13 @@ class MainViewModel @Inject constructor(
 
     private fun updateHistory(){
         viewModelScope.launch {
-            _historyList.value = getHistoryUseCase()
+            //зависит от текущего состояния сортировки (если она со старых начинается, то переворачиваем список)
+            if (_currentOrderHistoryIsNew.value){
+                _historyList.value = getHistoryUseCase()
+            }
+            else{
+                _historyList.value = getHistoryUseCase().reversed()
+            }
             _historyIsLoading.value = false
         }
     }
