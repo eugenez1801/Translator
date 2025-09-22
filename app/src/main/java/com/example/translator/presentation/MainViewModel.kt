@@ -15,6 +15,7 @@ import com.example.translator.domain.use_case.GetHistoryUseCase
 import com.example.translator.domain.use_case.GetTranslationUseCase
 import com.example.translator.domain.use_case.MakeWordFavouriteUseCase
 import com.example.translator.domain.use_case.RemoveFavouriteWordUseCase
+import com.example.translator.presentation.main_screen.components.SearchPartState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -31,25 +32,25 @@ class MainViewModel @Inject constructor(
     private val makeWordFavouriteUseCase: MakeWordFavouriteUseCase,
     private val removeFavouriteWordUseCase: RemoveFavouriteWordUseCase
 ): ViewModel(){
-    private val _textSearchField = mutableStateOf("")
-    val textSearchField: State<String> = _textSearchField
+    private val _searchPartState = mutableStateOf(SearchPartState())
+    val searchPartState: State<SearchPartState> = _searchPartState
     fun changeSearchText(newText: String){
-        if (newText.length == 0) _textSearchField.value = ""//чтобы можно было очистить строку
-        else if (!newText.endsWith("  ") && newText.isNotBlank())//немного валидации
-            _textSearchField.value = newText
+        if (newText.length == 0){
+            _searchPartState.value = _searchPartState.value.copy(
+                textInTextField = ""
+            )
+        }
+        else if (!newText.endsWith("  ") && newText.isNotBlank()){
+            _searchPartState.value = _searchPartState.value.copy(
+                textInTextField = newText
+            )
+        }
     }
     fun eraseSearchText(){
-        _textSearchField.value = ""
+        _searchPartState.value = _searchPartState.value.copy(
+            textInTextField = ""
+        )
     }
-
-    private val _isLoading = mutableStateOf(false)
-    val isLoading: State<Boolean> = _isLoading
-
-    private val _requestText = mutableStateOf("")//для отображения пользовательского запроса
-    val requestText: State<String> = _requestText
-
-    private val _resultText = mutableStateOf("")
-    val resultText: State<String> = _resultText
 
     private val _showToast = mutableStateOf(false)
     val showToast: State<Boolean> = _showToast
@@ -136,27 +137,34 @@ class MainViewModel @Inject constructor(
     }
 
     fun getTranslation(){
-        if (_textSearchField.value.isBlank()){
-//            _resultText.value = "Поле не должно быть пустым" заменено на показ Toast
+        if (_searchPartState.value.textInTextField.isBlank()){
             _showToast.value = true
             return
         }
 
-        _requestText.value = "Вы ввели: ${_textSearchField.value}"
+        _searchPartState.value = _searchPartState.value.copy(
+            requestText = "Вы ввели: ${_searchPartState.value.textInTextField}"
+        )
 
-        getTranslationUseCase(_textSearchField.value).onEach { result ->
+        getTranslationUseCase(_searchPartState.value.textInTextField).onEach { result ->
             when(result){
                 is Resource.Success ->{
-                    _isLoading.value = false
-                    _resultText.value = "Перевод: ${result.data}"
+                    _searchPartState.value = _searchPartState.value.copy(
+                        isLoading = false,
+                        resultText = "Перевод: ${result.data}"
+                    )
                     updateHistory()
                 }
                 is Resource.Loading -> {
-                    _isLoading.value = true
+                    _searchPartState.value = _searchPartState.value.copy(
+                        isLoading = true
+                    )
                 }
                 is Resource.Error -> {
-                    _isLoading.value = false
-                    _resultText.value = "Ошибка: ${result.error}"
+                    _searchPartState.value = _searchPartState.value.copy(
+                        isLoading = false,
+                        resultText = "Ошибка: ${result.error}"
+                    )
                 }
             }
         }.launchIn(viewModelScope)

@@ -52,11 +52,7 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = viewModel()
 ) {
-    val textForSearchField = viewModel.textSearchField.value
-    val textForRequest = viewModel.requestText.value
-    val textForResult = viewModel.resultText.value
-
-    val isLoading = viewModel.isLoading.value
+    val searchPartState = viewModel.searchPartState.value
 
     val showToast = viewModel.showToast.value
     val context = LocalContext.current
@@ -129,17 +125,17 @@ fun MainScreen(
                     Box(
                         modifier = Modifier
                             //уменьшили, поскольку верхний текст больше не является частью SearchPart
-                            .height(123.dp)//чтобы фиксированый размер был для верного отображения загрузки
+                            .height(130.dp)//чтобы фиксированый размер был для верного отображения загрузки
                     ){
-                        if (!isLoading){
+                        if (!searchPartState.isLoading){
                             SearchPart(
-                                textInSearchField = textForSearchField,
+                                textInSearchField = searchPartState.textInTextField,
                                 onTextChange = { newText ->
                                     viewModel.changeSearchText(newText)
                                 },
                                 onSearchClick = { viewModel.getTranslation() },
-                                requestText = textForRequest,
-                                resultText = textForResult,
+                                requestText = searchPartState.requestText,
+                                resultText = searchPartState.resultText,
                                 onEraseClick = { viewModel.eraseSearchText() }
                             )
                         } else {
