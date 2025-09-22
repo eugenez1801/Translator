@@ -47,7 +47,7 @@ fun ItemHistory(
             Text(
                 text = "$position ",
                 fontSize = if (position + 1 < 100) 30.sp
-                    else 23.sp,// <1000 помещается при 23, при 24 уже нет
+                    else 23.sp,// числа < 1000 помещаются
                 modifier = Modifier
                     .align(Alignment.Center)
             )
@@ -75,7 +75,6 @@ fun ItemHistory(
                 onFavouriteClick()
             },
             modifier = Modifier
-//                .size(50.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Star,
@@ -90,7 +89,6 @@ fun ItemHistory(
         IconButton(
             onClick = {onDeleteClick()},
             modifier = Modifier
-//                .size(50.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,

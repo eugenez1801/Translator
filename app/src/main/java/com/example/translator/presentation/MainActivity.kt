@@ -30,8 +30,10 @@ class MainActivity : ComponentActivity() {
             TranslatorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     contentWindowInsets = WindowInsets.systemBars) { innerPadding ->
+
                     val navController = rememberNavController()
                     val viewModel = hiltViewModel<MainViewModel>()
+
                     NavHost(
                         navController = navController,
                         startDestination = Screen.MainScreen,

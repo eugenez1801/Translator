@@ -1,4 +1,4 @@
-package com.example.cryptocurrencyappcompose.presentation.coin_list.dialogs.search_dialog.components
+package com.example.translator.presentation.common
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable

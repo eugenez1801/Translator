@@ -62,10 +62,11 @@ fun FavouritesScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val showButtonForScroll by remember {
-        derivedStateOf { listState.firstVisibleItemIndex > 6 }//изначально 2 поставил, были лаги
+        derivedStateOf { listState.firstVisibleItemIndex > 6 }
     }
 
-    var navigationAvailable by remember {//чтобы не было багов из-за быстрых нажатий навигаций
+    //чтобы не было багов из-за быстрых нажатий на иконку с навигацией
+    var navigationAvailable by remember {
         mutableStateOf(true)
     }
 

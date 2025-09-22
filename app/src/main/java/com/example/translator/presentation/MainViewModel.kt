@@ -32,9 +32,12 @@ class MainViewModel @Inject constructor(
     private val makeWordFavouriteUseCase: MakeWordFavouriteUseCase,
     private val removeFavouriteWordUseCase: RemoveFavouriteWordUseCase
 ): ViewModel(){
+
+    //работа с текстовым полем поиска в SearchPart
     private val _searchPartState = mutableStateOf(SearchPartState())
     val searchPartState: State<SearchPartState> = _searchPartState
     fun changeSearchText(newText: String){
+        //небольшая валидация
         if (newText.length == 0){
             _searchPartState.value = _searchPartState.value.copy(
                 textInTextField = ""
@@ -46,24 +49,29 @@ class MainViewModel @Inject constructor(
             )
         }
     }
-    fun eraseSearchText(){
+    //для кнопки очистки текстового поля поиска
+    fun onEraseSearchTextClick(){
         _searchPartState.value = _searchPartState.value.copy(
             textInTextField = ""
         )
     }
 
+    //toast для сообщения о пустой строке при поиске
     private val _showToast = mutableStateOf(false)
     val showToast: State<Boolean> = _showToast
     fun resetShowToast(){
         _showToast.value = false
     }
 
+    //хранит список слов для истории
     private val _historyList = mutableStateOf(emptyList<WordEntity>())
     val historyList: State<List<WordEntity>> = _historyList
 
-    private val _historyIsLoading = mutableStateOf(true)//для значка загрузки при запуске приложения
+    //нужна для того, чтобы при запуске приложения была загрузка истории вместо пустого экрана
+    private val _historyIsLoading = mutableStateOf(true)
     val historyIsLoading: State<Boolean> = _historyIsLoading
 
+    //показывается ли диалог для настройки истории
     private val _showHistoryOptionsDialog = mutableStateOf(false)
     val showHistoryOptionsDialog: State<Boolean> = _showHistoryOptionsDialog
     fun historyOptionsDialogShow(isShown: Boolean){
@@ -76,16 +84,15 @@ class MainViewModel @Inject constructor(
     fun confirmDeleteDialogShow(isShown: Boolean){
         _showConfirmDeleteDialog.value = isShown
     }
+    //хранит текущее выбранное слово из истории
     private val _wordForConfirmDeleteDialog = mutableStateOf<WordEntity?>(null)
-//    val wordForConfirmDeleteDialog: State<WordEntity?> = _wordForConfirmDeleteDialog
     fun changeCurrentWordForDialog(word: WordEntity){
         _wordForConfirmDeleteDialog.value = word
     }
 
-    //эта переменная для UI на экране с историей поиска
-    private val _setOfFavouriteWords = mutableStateSetOf<String>()//храним english для приведения
-    //wordEntity и favouriteWordEntity к общему виду
-//    val setOfFavouriteWords: Set<String> = _setOfFavouriteWords
+    //эта переменная для экрана с историей поиска
+    //храним english под String для приведения wordEntity и favouriteWordEntity к общему виду
+    private val _setOfFavouriteWords = mutableStateSetOf<String>()
 
     //эта переменная для экрана с избранными
     private val _favouriteWordsList = mutableStateOf(emptyList<FavouriteWordEntity>())
@@ -97,12 +104,13 @@ class MainViewModel @Inject constructor(
     fun confirmFavouriteDeleteDialogShow(isShown: Boolean){
         _showConfirmFavouriteDeleteDialog.value = isShown
     }
+    //хранит текущее выбранное избранное слово
     private val _wordForConfirmFavouriteDeleteDialog = mutableStateOf<FavouriteWordEntity?>(null)
-    //    val wordForConfirmDeleteDialog: State<WordEntity?> = _wordForConfirmDeleteDialog
     fun changeCurrentFavouriteWordForDialog(word: FavouriteWordEntity){
         _wordForConfirmFavouriteDeleteDialog.value = word
     }
 
+    //текущая сортировка истории == Сначала новые?
     private val _currentOrderHistoryIsNew = mutableStateOf(true)
     val currentOrderHistoryIsNew: State<Boolean> = _currentOrderHistoryIsNew
     fun changeOrderHistory(isNew: Boolean){
@@ -130,6 +138,7 @@ class MainViewModel @Inject constructor(
     }
 
     init {
+        //с самого начала получаем историю и список избранных слов
         viewModelScope.launch {
             updateHistory()
             getFavouriteWords()
@@ -137,6 +146,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getTranslation(){
+        //если поле для ввода пустое, то ничего не выполняется
         if (_searchPartState.value.textInTextField.isBlank()){
             _showToast.value = true
             return
@@ -170,6 +180,7 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    //получение актуальной истории
     private suspend fun updateHistory(){
         //зависит от текущего состояния сортировки (если она со старых начинается, то переворачиваем список)
         if (_currentOrderHistoryIsNew.value){
@@ -179,14 +190,13 @@ class MainViewModel @Inject constructor(
             _historyList.value = getHistoryUseCase().reversed()
         }
         _historyIsLoading.value = false
-
     }
 
     //для удаления из истории (в диалоговом окне)
     fun deleteWordFromHistory(){
         viewModelScope.launch {
             deleteWordFromHistoryUseCase(_wordForConfirmDeleteDialog.value!!)
-            updateHistory()//тоже должна быть в корутине, поскольку ждем завершения
+            updateHistory()
         }
     }
 
@@ -233,6 +243,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //получение актуального списка избранных слов
     private suspend fun getFavouriteWords(){
         val favouriteWords = getFavouriteWordsUseCase()
         _setOfFavouriteWords.addAll(favouriteWords.map { it.english })
@@ -240,6 +251,7 @@ class MainViewModel @Inject constructor(
         else _favouriteWordsList.value = favouriteWords.reversed()
     }
 
+    //определение является ли слово из истории избранным
     fun isFavouriteWord(word: WordEntity): Boolean{
         return _setOfFavouriteWords.contains(word.english)
     }

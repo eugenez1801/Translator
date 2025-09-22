@@ -124,8 +124,7 @@ fun MainScreen(
                 item {
                     Box(
                         modifier = Modifier
-                            //уменьшили, поскольку верхний текст больше не является частью SearchPart
-                            .height(130.dp)//чтобы фиксированый размер был для верного отображения загрузки
+                            .height(130.dp)//фиксированый размер для верного отображения загрузки
                     ){
                         if (!searchPartState.isLoading){
                             SearchPart(
@@ -136,7 +135,7 @@ fun MainScreen(
                                 onSearchClick = { viewModel.getTranslation() },
                                 requestText = searchPartState.requestText,
                                 resultText = searchPartState.resultText,
-                                onEraseClick = { viewModel.eraseSearchText() }
+                                onEraseClick = { viewModel.onEraseSearchTextClick() }
                             )
                         } else {
                             Box(
@@ -235,6 +234,7 @@ fun MainScreen(
                             }
                         )
 
+                        //для создания HorizontalDivider после последнего элемента
                         if (position + 1 == historyList.size){
                             HorizontalDivider(thickness = 1.dp,
                                 modifier = Modifier

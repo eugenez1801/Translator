@@ -10,6 +10,9 @@ import com.example.translator.domain.model.local.WordEntity
 
 @Dao
 interface WordDao {
+
+    //для работы с историей запросов
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addWordToHistory(word: WordEntity)
 
@@ -22,7 +25,7 @@ interface WordDao {
     @Delete
     suspend fun deleteWordFromHistory(word: WordEntity)
 
-
+    //для работы с избранными словами
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun makeWordFavourite(favouriteWord: FavouriteWordEntity)

@@ -11,11 +11,13 @@ class RemoveFavouriteWordUseCase @Inject constructor(
     suspend operator fun invoke(favouriteWordEntity: FavouriteWordEntity? = null,
                                 wordEntity: WordEntity? = null){
 
-        if (favouriteWordEntity != null){//для случая, когда удаление происходит с экрана избранных слов
+        //для случая, когда удаление избранного слова происходит с экрана избранных слов
+        if (favouriteWordEntity != null){
             repository.removeFavouriteWord(favouriteWordEntity)
         }
 
-        else if (wordEntity != null){//для случая, когда удаление избранного слова происходит из истории
+        //для случая, когда удаление избранного слова происходит из истории
+        else if (wordEntity != null){
             val favouriteWord = repository.getFavouriteWordByEnglish(wordEntity.english)
             repository.removeFavouriteWord(favouriteWord)
         }
