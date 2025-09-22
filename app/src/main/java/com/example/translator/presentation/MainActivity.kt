@@ -31,19 +31,18 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     contentWindowInsets = WindowInsets.systemBars) { innerPadding ->
                     val navController = rememberNavController()
+                    val viewModel = hiltViewModel<MainViewModel>()
                     NavHost(
                         navController = navController,
                         startDestination = Screen.MainScreen,
                         modifier = Modifier.padding(innerPadding)
                     ){
                         composable<Screen.MainScreen> {
-                            val viewModel = hiltViewModel<MainViewModel>()
-                            MainScreen(navController)
+                            MainScreen(navController, viewModel)
                         }
 
                         composable<Screen.FavouritesScreen> {
-                            val viewModel = hiltViewModel<MainViewModel>()
-                            FavouritesScreen(navController)
+                            FavouritesScreen(navController, viewModel)
                         }
                     }
                 }

@@ -112,8 +112,10 @@ class MainViewModel @Inject constructor(
     }
 
     init {
-        updateHistory()
-        getFavouriteWords()
+        viewModelScope.launch {
+            updateHistory()
+            getFavouriteWords()
+        }
     }
 
     fun getTranslation(){
@@ -143,17 +145,16 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun updateHistory(){
-        viewModelScope.launch {
-            //зависит от текущего состояния сортировки (если она со старых начинается, то переворачиваем список)
-            if (_currentOrderHistoryIsNew.value){
-                _historyList.value = getHistoryUseCase()
-            }
-            else{
-                _historyList.value = getHistoryUseCase().reversed()
-            }
-            _historyIsLoading.value = false
+    private suspend fun updateHistory(){
+        //зависит от текущего состояния сортировки (если она со старых начинается, то переворачиваем список)
+        if (_currentOrderHistoryIsNew.value){
+            _historyList.value = getHistoryUseCase()
         }
+        else{
+            _historyList.value = getHistoryUseCase().reversed()
+        }
+        _historyIsLoading.value = false
+
     }
 
     //для удаления из истории (в диалоговом окне)
@@ -207,12 +208,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getFavouriteWords(){
-        viewModelScope.launch {
-            val favouriteWords = getFavouriteWordsUseCase()
-            _setOfFavouriteWords.addAll(favouriteWords.map { it.english })
-            _favouriteWordsList.value = favouriteWords
-        }
+    private suspend fun getFavouriteWords(){
+        val favouriteWords = getFavouriteWordsUseCase()
+        _setOfFavouriteWords.addAll(favouriteWords.map { it.english })
+        _favouriteWordsList.value = favouriteWords
     }
 
     fun isFavouriteWord(word: WordEntity): Boolean{
