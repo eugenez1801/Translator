@@ -111,6 +111,23 @@ class MainViewModel @Inject constructor(
         _currentOrderHistoryIsNew.value = isNew
     }
 
+    //текущая сортировка избранных слов == Сначала новые?
+    private val _currentOrderFavouriteIsNew = mutableStateOf(true)
+    val currentOrderFavouriteIsNew: State<Boolean> = _currentOrderFavouriteIsNew
+    fun changeOrderFavourite(isNew: Boolean){
+        if (_currentOrderFavouriteIsNew.value != isNew){
+            _favouriteWordsList.value = _favouriteWordsList.value.reversed()
+        }
+        _currentOrderFavouriteIsNew.value = isNew
+    }
+
+    //показывается ли на экране секция с настройками списка избранных слов
+    private val _isOptionSectionVisible = mutableStateOf(false)
+    val isOptionSectionVisible: State<Boolean> = _isOptionSectionVisible
+    fun onOptionSectionClick(){
+        _isOptionSectionVisible.value = !_isOptionSectionVisible.value
+    }
+
     init {
         viewModelScope.launch {
             updateHistory()
@@ -211,7 +228,8 @@ class MainViewModel @Inject constructor(
     private suspend fun getFavouriteWords(){
         val favouriteWords = getFavouriteWordsUseCase()
         _setOfFavouriteWords.addAll(favouriteWords.map { it.english })
-        _favouriteWordsList.value = favouriteWords
+        if (_currentOrderFavouriteIsNew.value) _favouriteWordsList.value = favouriteWords
+        else _favouriteWordsList.value = favouriteWords.reversed()
     }
 
     fun isFavouriteWord(word: WordEntity): Boolean{

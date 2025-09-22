@@ -1,5 +1,7 @@
 package com.example.translator.presentation.favourites_screen
 
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -22,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -42,6 +47,7 @@ import com.example.translator.presentation.MainViewModel
 import com.example.translator.presentation.Screen
 import com.example.translator.presentation.common.dialogs.ConfirmDeleteDialog
 import com.example.translator.presentation.favourites_screen.components.ItemFavourites
+import com.example.translator.presentation.favourites_screen.components.OptionSection
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,6 +68,8 @@ fun FavouritesScreen(
     var navigationAvailable by remember {//чтобы не было багов из-за быстрых нажатий навигаций
         mutableStateOf(true)
     }
+
+    val isOptionSectionVisible = viewModel.isOptionSectionVisible.value
 
     Column(
         modifier = Modifier
@@ -115,8 +123,47 @@ fun FavouritesScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 8.dp),
-                state = listState
+                state = listState,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                item {
+                    TextButton(
+                        onClick = { viewModel.onOptionSectionClick() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        shape = FloatingActionButtonDefaults.smallShape
+                    ) {
+                        Text(
+                            text = "Настройки",
+                            fontSize = 22.sp,
+                            modifier = Modifier
+                                .padding(end = 3.dp)
+                        )
+
+                        Icon(
+                            imageVector = Icons.Default.Build,
+                            contentDescription = "Настройки",
+                            modifier = Modifier
+                                .size(14.dp)
+                        )
+                    }
+
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = isOptionSectionVisible,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        OptionSection(
+                            orderNew = viewModel.currentOrderFavouriteIsNew.value,
+                            onChangeOrderClick = {
+                                viewModel.changeOrderFavourite(it)
+                            }
+                        )
+                    }
+                }
+
                 item {
                     if (favouriteWordsList.isNotEmpty()){
                         Row(
